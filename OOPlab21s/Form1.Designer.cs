@@ -81,17 +81,6 @@ namespace OOPlab21s
             toolStripSeparator7 = new ToolStripSeparator();
             tbInsertImage = new ToolStripButton();
             tbSyntaxHighlight = new ToolStripButton();
-            statusStrip1 = new StatusStrip();
-            sbAmount = new ToolStripStatusLabel();
-            sbTime = new ToolStripStatusLabel();
-            tabControl1 = new TabControl();
-            contextMenuStrip1 = new ContextMenuStrip(components);
-            cmnuCut = new ToolStripMenuItem();
-            cmnuCopy = new ToolStripMenuItem();
-            cmnuPaste = new ToolStripMenuItem();
-            cmnuDelete = new ToolStripMenuItem();
-            toolStripSeparator5 = new ToolStripSeparator();
-            cmnuSelectAll = new ToolStripMenuItem();
             openFileDialog1 = new OpenFileDialog();
             saveFileDialog1 = new SaveFileDialog();
             fontDialog1 = new FontDialog();
@@ -106,8 +95,6 @@ namespace OOPlab21s
             lblFind = new Label();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
-            statusStrip1.SuspendLayout();
-            contextMenuStrip1.SuspendLayout();
             panelFind.SuspendLayout();
             SuspendLayout();
             // 
@@ -506,88 +493,6 @@ namespace OOPlab21s
             tbSyntaxHighlight.ToolTipText = "Підсвічування синтаксису C#";
             tbSyntaxHighlight.Click += tbSyntaxHighlight_Click;
             // 
-            // statusStrip1
-            // 
-            statusStrip1.ImageScalingSize = new Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { sbAmount, sbTime });
-            statusStrip1.Location = new Point(0, 478);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Padding = new Padding(1, 0, 12, 0);
-            statusStrip1.Size = new Size(900, 22);
-            statusStrip1.TabIndex = 2;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // sbAmount
-            // 
-            sbAmount.Name = "sbAmount";
-            sbAmount.Size = new Size(122, 17);
-            sbAmount.Text = "Кількість символів: 0";
-            // 
-            // sbTime
-            // 
-            sbTime.Name = "sbTime";
-            sbTime.Size = new Size(765, 17);
-            sbTime.Spring = true;
-            sbTime.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // tabControl1
-            // 
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 79);
-            tabControl1.Margin = new Padding(3, 2, 3, 2);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(900, 399);
-            tabControl1.TabIndex = 3;
-            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
-            // 
-            // contextMenuStrip1
-            // 
-            contextMenuStrip1.ImageScalingSize = new Size(20, 20);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { cmnuCut, cmnuCopy, cmnuPaste, cmnuDelete, toolStripSeparator5, cmnuSelectAll });
-            contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(145, 120);
-            // 
-            // cmnuCut
-            // 
-            cmnuCut.Name = "cmnuCut";
-            cmnuCut.Size = new Size(144, 22);
-            cmnuCut.Text = "Вирізати";
-            cmnuCut.Click += mnuCut_Click;
-            // 
-            // cmnuCopy
-            // 
-            cmnuCopy.Name = "cmnuCopy";
-            cmnuCopy.Size = new Size(144, 22);
-            cmnuCopy.Text = "Копіювати";
-            cmnuCopy.Click += mnuCopy_Click;
-            // 
-            // cmnuPaste
-            // 
-            cmnuPaste.Name = "cmnuPaste";
-            cmnuPaste.Size = new Size(144, 22);
-            cmnuPaste.Text = "Вставити";
-            cmnuPaste.Click += mnuPaste_Click;
-            // 
-            // cmnuDelete
-            // 
-            cmnuDelete.Name = "cmnuDelete";
-            cmnuDelete.Size = new Size(144, 22);
-            cmnuDelete.Text = "Видалити";
-            cmnuDelete.Click += mnuDelete_Click;
-            // 
-            // toolStripSeparator5
-            // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(141, 6);
-            // 
-            // cmnuSelectAll
-            // 
-            cmnuSelectAll.Name = "cmnuSelectAll";
-            cmnuSelectAll.Size = new Size(144, 22);
-            cmnuSelectAll.Text = "Виділити все";
-            cmnuSelectAll.Click += mnuSelectAll_Click;
-            // 
             // openFileDialog1
             // 
             openFileDialog1.Filter = "RTF файли (*.rtf)|*.rtf|Текстові файли (*.txt)|*.txt|Усі файли (*.*)|*.*";
@@ -682,9 +587,7 @@ namespace OOPlab21s
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 500);
-            Controls.Add(tabControl1);
             Controls.Add(panelFind);
-            Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Controls.Add(menuStrip1);
             IsMdiContainer = true;
@@ -697,9 +600,6 @@ namespace OOPlab21s
             menuStrip1.PerformLayout();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
-            contextMenuStrip1.ResumeLayout(false);
             panelFind.ResumeLayout(false);
             panelFind.PerformLayout();
             ResumeLayout(false);
@@ -760,17 +660,6 @@ namespace OOPlab21s
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripButton tbInsertImage;
         private System.Windows.Forms.ToolStripButton tbSyntaxHighlight;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel sbAmount;
-        private System.Windows.Forms.ToolStripStatusLabel sbTime;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem cmnuCut;
-        private System.Windows.Forms.ToolStripMenuItem cmnuCopy;
-        private System.Windows.Forms.ToolStripMenuItem cmnuPaste;
-        private System.Windows.Forms.ToolStripMenuItem cmnuDelete;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripMenuItem cmnuSelectAll;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.FontDialog fontDialog1;

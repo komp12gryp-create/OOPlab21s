@@ -207,8 +207,6 @@ namespace OOPlab21s
             InitializeComponent();
             mnuSave.Enabled = false;
             tbSave.Enabled = false;
-            sbTime.Text = DateTime.Now.ToLongTimeString();
-            sbTime.ToolTipText = DateTime.Today.ToLongDateString();
         }
 
         private string L(string key)
@@ -216,6 +214,20 @@ namespace OOPlab21s
             if (Locales.ContainsKey(currentLang) && Locales[currentLang].ContainsKey(key))
                 return Locales[currentLang][key];
             return Locales["uk"][key];
+        }
+
+        // Получаем активную дочернюю форму blank
+        private blank GetActiveBlank()
+        {
+            return this.ActiveMdiChild as blank;
+        }
+
+        // Получаем RichTextBox из активной дочерней формы
+        private RichTextBox GetActiveRichTextBox()
+        {
+            blank frm = GetActiveBlank();
+            if (frm != null) return frm.richTextBox1;
+            return null;
         }
 
         private void ApplyLanguage()
@@ -268,12 +280,6 @@ namespace OOPlab21s
             tbInsertImage.ToolTipText = L("InsertImg");
             tbSyntaxHighlight.ToolTipText = L("SyntaxHL");
 
-            cmnuCut.Text = L("Cut");
-            cmnuCopy.Text = L("Copy");
-            cmnuPaste.Text = L("Paste");
-            cmnuDelete.Text = L("Delete");
-            cmnuSelectAll.Text = L("SelectAll");
-
             lblFind.Text = L("FindLabel");
             btnFindNext.Text = L("FindNext");
             chkMatchCase.Text = L("MatchCase");
@@ -284,51 +290,9 @@ namespace OOPlab21s
             saveFileDialog1.Filter = L("FilterSave");
             openFileDialogImage.Filter = L("FilterImage");
 
-            RichTextBox? rtb = GetActiveRichTextBox();
-            sbAmount.Text = L("SymbolCount") + (rtb != null ? rtb.Text.Length.ToString() : "0");
-
             mnuLangUk.Checked = currentLang == "uk";
             mnuLangEn.Checked = currentLang == "en";
             mnuLangDe.Checked = currentLang == "de";
-        }
-
-        private RichTextBox? GetActiveRichTextBox()
-        {
-            if (tabControl1.SelectedTab == null) return null;
-            foreach (Control c in tabControl1.SelectedTab.Controls)
-            {
-                if (c is RichTextBox rtb) return rtb;
-            }
-            return null;
-        }
-
-        private string GetDocName(TabPage tab)
-        {
-            return tab.Tag as string ?? tab.Text;
-        }
-
-        private void SetDocName(TabPage tab, string name)
-        {
-            tab.Tag = name;
-            tab.Text = Path.GetFileName(name);
-        }
-
-        private TabPage CreateNewTab(string title)
-        {
-            TabPage tab = new TabPage(title);
-            tab.Tag = title;
-
-            RichTextBox rtb = new RichTextBox();
-            rtb.Dock = DockStyle.Fill;
-            rtb.ContextMenuStrip = contextMenuStrip1;
-            rtb.TextChanged += richTextBox_TextChanged;
-            rtb.AcceptsTab = true;
-            tab.Controls.Add(rtb);
-
-            tabControl1.TabPages.Add(tab);
-            tabControl1.SelectedTab = tab;
-
-            return tab;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -336,10 +300,18 @@ namespace OOPlab21s
             ApplyLanguage();
         }
 
+        // --- File menu ---
+
         private void mnuNew_Click(object sender, EventArgs e)
         {
-            string docName = L("Untitled") + " " + ++openDocuments;
-            CreateNewTab(docName);
+            // Создаем новый экземпляр формы blank
+            blank frm = new blank();
+            frm.DocName = L("Untitled") + " " + ++openDocuments;
+            // Указываем, что родительским контейнером является эта главная форма
+            frm.MdiParent = this;
+            frm.Text = frm.DocName;
+            // Показываем форму
+            frm.Show();
             UpdateSaveState();
         }
 
@@ -347,66 +319,50 @@ namespace OOPlab21s
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                TabPage tab = CreateNewTab(Path.GetFileName(openFileDialog1.FileName));
-                SetDocName(tab, openFileDialog1.FileName);
-
-                RichTextBox? rtb = GetActiveRichTextBox();
-                if (rtb != null)
-                {
-                    string ext = Path.GetExtension(openFileDialog1.FileName).ToLower();
-                    if (ext == ".rtf")
-                    {
-                        rtb.LoadFile(openFileDialog1.FileName, RichTextBoxStreamType.RichText);
-                    }
-                    else
-                    {
-                        rtb.LoadFile(openFileDialog1.FileName, RichTextBoxStreamType.PlainText);
-                    }
-                }
-                UpdateSaveState();
-            }
-        }
-
-        private void mnuSave_Click(object sender, EventArgs e)
-        {
-            if (tabControl1.SelectedTab == null) return;
-
-            string docName = GetDocName(tabControl1.SelectedTab);
-            if (docName.StartsWith(L("Untitled")))
-            {
-                mnuSaveAs_Click(sender, e);
-                return;
-            }
-
-            SaveToFile(docName);
-        }
-
-        private void mnuSaveAs_Click(object sender, EventArgs e)
-        {
-            if (tabControl1.SelectedTab == null) return;
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                SaveToFile(saveFileDialog1.FileName);
-                SetDocName(tabControl1.SelectedTab, saveFileDialog1.FileName);
+                // Создаем новый документ
+                blank frm = new blank();
+                // Вызываем метод Open формы blank
+                frm.Open(openFileDialog1.FileName);
+                // Указываем родительскую форму
+                frm.MdiParent = this;
+                // Присваиваем имя файла
+                frm.DocName = openFileDialog1.FileName;
+                frm.Text = Path.GetFileName(frm.DocName);
+                // Показываем форму
+                frm.Show();
                 mnuSave.Enabled = true;
                 tbSave.Enabled = true;
             }
         }
 
-        private void SaveToFile(string fileName)
+        private void mnuSave_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb == null) return;
+            blank frm = GetActiveBlank();
+            if (frm == null) return;
 
-            string ext = Path.GetExtension(fileName).ToLower();
-            if (ext == ".rtf")
+            if (frm.DocName.StartsWith(L("Untitled")))
             {
-                rtb.SaveFile(fileName, RichTextBoxStreamType.RichText);
+                mnuSaveAs_Click(sender, e);
+                return;
             }
-            else
+
+            frm.Save(frm.DocName);
+            frm.IsSaved = true;
+        }
+
+        private void mnuSaveAs_Click(object sender, EventArgs e)
+        {
+            blank frm = GetActiveBlank();
+            if (frm == null) return;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                rtb.SaveFile(fileName, RichTextBoxStreamType.PlainText);
+                frm.Save(saveFileDialog1.FileName);
+                frm.DocName = saveFileDialog1.FileName;
+                frm.Text = Path.GetFileName(frm.DocName);
+                frm.IsSaved = true;
+                mnuSave.Enabled = true;
+                tbSave.Enabled = true;
             }
         }
 
@@ -415,34 +371,36 @@ namespace OOPlab21s
             this.Close();
         }
 
+        // --- Edit menu ---
+
         private void mnuCut_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null) rtb.Cut();
+            blank frm = GetActiveBlank();
+            if (frm != null) frm.Cut();
         }
 
         private void mnuCopy_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null) rtb.Copy();
+            blank frm = GetActiveBlank();
+            if (frm != null) frm.Copy();
         }
 
         private void mnuPaste_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null) rtb.Paste();
+            blank frm = GetActiveBlank();
+            if (frm != null) frm.PasteText();
         }
 
         private void mnuDelete_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null) rtb.SelectedText = "";
+            blank frm = GetActiveBlank();
+            if (frm != null) frm.Delete();
         }
 
         private void mnuSelectAll_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null) rtb.SelectAll();
+            blank frm = GetActiveBlank();
+            if (frm != null) frm.SelectAllText();
         }
 
         private void mnuFind_Click(object sender, EventArgs e)
@@ -453,7 +411,7 @@ namespace OOPlab21s
 
         private void btnFindNext_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb == null || string.IsNullOrEmpty(txtFind.Text)) return;
 
             RichTextBoxFinds options = RichTextBoxFinds.None;
@@ -479,9 +437,11 @@ namespace OOPlab21s
             panelFind.Visible = false;
         }
 
+        // --- Format menu ---
+
         private void mnuFont_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb == null) return;
 
             fontDialog1.ShowColor = true;
@@ -497,7 +457,7 @@ namespace OOPlab21s
 
         private void mnuColor_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb == null) return;
 
             colorDialog1.Color = rtb.SelectionColor;
@@ -510,25 +470,25 @@ namespace OOPlab21s
 
         private void mnuAlignLeft_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb != null) rtb.SelectionAlignment = HorizontalAlignment.Left;
         }
 
         private void mnuAlignCenter_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb != null) rtb.SelectionAlignment = HorizontalAlignment.Center;
         }
 
         private void mnuAlignRight_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb != null) rtb.SelectionAlignment = HorizontalAlignment.Right;
         }
 
         private void mnuInsertImage_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb == null) return;
 
             if (openFileDialogImage.ShowDialog() == DialogResult.OK)
@@ -538,6 +498,8 @@ namespace OOPlab21s
                 rtb.Paste();
             }
         }
+
+        // --- Window menu (MDI layout) ---
 
         private void mnuCascade_Click(object sender, EventArgs e)
         {
@@ -559,6 +521,8 @@ namespace OOPlab21s
             this.LayoutMdi(MdiLayout.ArrangeIcons);
         }
 
+        // --- Language menu ---
+
         private void mnuLangUk_Click(object sender, EventArgs e)
         {
             currentLang = "uk";
@@ -577,15 +541,19 @@ namespace OOPlab21s
             ApplyLanguage();
         }
 
+        // --- Help menu ---
+
         private void mnuAbout_Click(object sender, EventArgs e)
         {
             MessageBox.Show(L("AboutText"), L("AboutTitle"),
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        // --- Syntax highlighting ---
+
         private void tbSyntaxHighlight_Click(object sender, EventArgs e)
         {
-            RichTextBox? rtb = GetActiveRichTextBox();
+            RichTextBox rtb = GetActiveRichTextBox();
             if (rtb == null) return;
 
             if (tbSyntaxHighlight.Checked)
@@ -751,35 +719,12 @@ namespace OOPlab21s
             rtb.ResumeLayout();
         }
 
-        private void richTextBox_TextChanged(object? sender, EventArgs e)
-        {
-            RichTextBox? rtb = sender as RichTextBox;
-            if (rtb != null)
-            {
-                sbAmount.Text = L("SymbolCount") + rtb.Text.Length.ToString();
-            }
-        }
-
-        private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e)
-        {
-            RichTextBox? rtb = GetActiveRichTextBox();
-            if (rtb != null)
-            {
-                sbAmount.Text = L("SymbolCount") + rtb.Text.Length.ToString();
-            }
-            else
-            {
-                sbAmount.Text = L("SymbolCount") + "0";
-            }
-            UpdateSaveState();
-        }
-
         private void UpdateSaveState()
         {
-            bool hasTab = tabControl1.TabPages.Count > 0;
-            mnuSave.Enabled = hasTab;
-            tbSave.Enabled = hasTab;
-            mnuSaveAs.Enabled = hasTab;
+            bool hasChild = this.ActiveMdiChild != null;
+            mnuSave.Enabled = hasChild;
+            tbSave.Enabled = hasChild;
+            mnuSaveAs.Enabled = hasChild;
         }
     }
 }
