@@ -216,13 +216,10 @@ namespace OOPlab21s
             return Locales["uk"][key];
         }
 
-        // Получаем активную дочернюю форму blank
         private blank GetActiveBlank()
         {
             return this.ActiveMdiChild as blank;
         }
-
-        // Получаем RichTextBox из активной дочерней формы
         private RichTextBox GetActiveRichTextBox()
         {
             blank frm = GetActiveBlank();
@@ -300,17 +297,12 @@ namespace OOPlab21s
             ApplyLanguage();
         }
 
-        // --- File menu ---
-
         private void mnuNew_Click(object sender, EventArgs e)
         {
-            // Создаем новый экземпляр формы blank
             blank frm = new blank();
             frm.DocName = L("Untitled") + " " + ++openDocuments;
-            // Указываем, что родительским контейнером является эта главная форма
             frm.MdiParent = this;
             frm.Text = frm.DocName;
-            // Показываем форму
             frm.Show();
             UpdateSaveState();
         }
@@ -319,16 +311,11 @@ namespace OOPlab21s
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                // Создаем новый документ
                 blank frm = new blank();
-                // Вызываем метод Open формы blank
                 frm.Open(openFileDialog1.FileName);
-                // Указываем родительскую форму
                 frm.MdiParent = this;
-                // Присваиваем имя файла
                 frm.DocName = openFileDialog1.FileName;
                 frm.Text = Path.GetFileName(frm.DocName);
-                // Показываем форму
                 frm.Show();
                 mnuSave.Enabled = true;
                 tbSave.Enabled = true;
@@ -370,8 +357,6 @@ namespace OOPlab21s
         {
             this.Close();
         }
-
-        // --- Edit menu ---
 
         private void mnuCut_Click(object sender, EventArgs e)
         {
@@ -437,8 +422,6 @@ namespace OOPlab21s
             panelFind.Visible = false;
         }
 
-        // --- Format menu ---
-
         private void mnuFont_Click(object sender, EventArgs e)
         {
             RichTextBox rtb = GetActiveRichTextBox();
@@ -499,8 +482,6 @@ namespace OOPlab21s
             }
         }
 
-        // --- Window menu (MDI layout) ---
-
         private void mnuCascade_Click(object sender, EventArgs e)
         {
             this.LayoutMdi(MdiLayout.Cascade);
@@ -521,8 +502,6 @@ namespace OOPlab21s
             this.LayoutMdi(MdiLayout.ArrangeIcons);
         }
 
-        // --- Language menu ---
-
         private void mnuLangUk_Click(object sender, EventArgs e)
         {
             currentLang = "uk";
@@ -541,15 +520,11 @@ namespace OOPlab21s
             ApplyLanguage();
         }
 
-        // --- Help menu ---
-
         private void mnuAbout_Click(object sender, EventArgs e)
         {
             MessageBox.Show(L("AboutText"), L("AboutTitle"),
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        // --- Syntax highlighting ---
 
         private void tbSyntaxHighlight_Click(object sender, EventArgs e)
         {

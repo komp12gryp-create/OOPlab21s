@@ -17,7 +17,6 @@ namespace OOPlab21s
             sbTime.ToolTipText = DateTime.Today.ToLongDateString();
         }
 
-        // --- Document methods ---
 
         public void Open(string openFileName)
         {
@@ -51,8 +50,6 @@ namespace OOPlab21s
             DocName = saveFileName;
         }
 
-        // --- Edit methods ---
-
         public void Cut()
         {
             richTextBox1.Cut();
@@ -77,8 +74,6 @@ namespace OOPlab21s
         {
             richTextBox1.SelectedText = "";
         }
-
-        // --- Event handlers ---
 
         private void cmnuCut_Click(object sender, EventArgs e)
         {
