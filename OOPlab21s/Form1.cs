@@ -623,9 +623,10 @@ namespace OOPlab21s
             }
 
             rtb.SelectionStart = selStart;
-            rtb.SelectionLength = selLength;
+            rtb.SelectionLength = 0;
             rtb.SelectionColor = Color.Black;
             rtb.SelectionFont = new Font(rtb.Font, FontStyle.Regular);
+            rtb.SelectionLength = selLength;
             rtb.ResumeLayout();
         }
 
